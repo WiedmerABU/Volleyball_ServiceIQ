@@ -1,0 +1,11 @@
+import {writeFileSync} from 'node:fs';
+import {newMatch,pushEvent} from '../js/model.js';
+import {excelBlob} from '../js/excel.js';
+let t={id:'t',club:'VBC Interlaken',category:'Damen',season:'2026/27',players:Array.from({length:7},(_,i)=>({id:`p${i}`,number:i+1,first:'Test',last:`Spielerin ${i}`}))};
+let m=newMatch(t,'Gegner','2026-10-25',t.players.map(p=>p.id));
+m=pushEvent(m,{type:'SET_START',lineup:t.players.slice(0,6).map(p=>p.id),liberoId:null,side:'left',firstServe:'home'});
+m=pushEvent(m,{type:'RALLY',kind:'ace',winner:'home'});
+m=pushEvent(m,{type:'NORMAL'});
+m=pushEvent(m,{type:'RALLY',kind:'normal',winner:'away'});
+writeFileSync('tests/test-export.xlsx',Buffer.from(await excelBlob(m).arrayBuffer()));
+console.log('PASS – XLSX erstellt.');
